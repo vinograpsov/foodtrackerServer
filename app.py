@@ -1,9 +1,11 @@
-from flask import Flask
+from flask import Flask, jsonify,  request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-
 from models import db, Users, Elements, Fridge, Products, Recipes, RecipesProducts
+import jwt
+from werkzeug.security import check_password_hash, generate_password_hash
 
+SECRET_KEY = 'tmp_secret_key'
 
 # ----------------- DATABASE CONNECTION-----------------
 def get_db_secrets():
@@ -27,57 +29,7 @@ db.init_app(app)
 
 
 # -----------------  ADD VIEWS -----------------
-@app.route("/auth/me",methods=["GET"])
-def h():
-    return "Auth me"
-
-@app.route("/auth/signin",methods=["POST"])
-def signin():
-    return "Sign in"
-
-@app.route("/auth/signup",methods=["POST"])
-def signup():
-    return "Sign up"
-
-@app.route("/calories",methods=["GET"])
-def calories_get():
-    return "Calories"
-
-@app.route("/calories",methods=["POST"])
-def calories_post():
-    return "Calories"
-
-@app.route("/fridge/bymyself",methods=["POST"])
-def fridge_bymyself():
-    return "Fridge by myself"
-
-@app.route("/fridge/byqrcode", methods=["POST"])
-def fridge_byqrcode():
-    return "Fridge by QR code"
-
-@app.route("/fridge/<int:product_id>", methods=["DELETE"])
-def fridge_delete(product_id):
-    return "Fridge delete"
-
-@app.route("/fridge/<int:product_id>", methods=["PATCH"])
-def fridge_patch(product_id):  
-    return "Fridge patch"
-
-@app.route("/recepes/my", methods = ["GET"])
-def recepes_my():
-    return "Recepes my"
-
-@app.route("/recepes/global", methods = ["POST"])
-def recepes_global():
-    return "Recepes global post"
-
-@app.route("/recepes/global", methods = ["GET"])
-def recepes_global_get():
-    return "Recepes global get"
-
-@app.route("/settings", methods = ["PATCH"])
-def settings_patch():
-    return "Settings patch"
+from views import *
 # -----------------  ADD VIEWS -----------------
 
 
