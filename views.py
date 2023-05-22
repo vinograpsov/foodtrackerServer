@@ -48,7 +48,7 @@ def signin():
     if user is None:
         return jsonify({"message": "User not found"}), 404
     elif check_password_hash(user.usr_password, password) is False:
-        return jsonify({"message": "Wrong password"}), 401
+        return jsonify({"message": "Wrong username or password"}), 401
     else:
         token = jwt.encode({"user_id": user.id}, SECRET_KEY, algorithm="HS256")
 
