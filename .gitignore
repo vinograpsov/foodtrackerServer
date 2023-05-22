@@ -1,3 +1,6 @@
 /secrets.txt
 /__pycache__
 /certs
+/certificates
+/venv
+.env
