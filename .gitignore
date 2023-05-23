@@ -4,3 +4,4 @@
 /certificates
 /venv
 .env
+/routes/__pycache__
