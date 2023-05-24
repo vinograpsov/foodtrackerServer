@@ -19,7 +19,7 @@ class Users(db.Model):
 class Elements(db.Model):
     __tablename__ = 'elements'
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    date_usr = db.Column(db.Date, primary_key=True)
+    date_usr = db.Column(db.DateTime, primary_key=True)
     calories = db.Column(db.Float, nullable=False)
     protein = db.Column(db.Float, nullable=False)
     fat = db.Column(db.Float, nullable=False)

@@ -7,10 +7,12 @@ from flask import Flask, jsonify
 from models import db, Users
 
 from routes.auth import auth_bp
+from routes.calories import calories_bp
 
 app = Flask(__name__)
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(calories_bp)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"mysql+pymysql://{os.environ.get('DB_USERNAME')}:{os.environ.get('PASSWORD')}@{os.environ.get('DATABASE_SERVER_URL')}/{os.environ.get('DATABASE_NAME')}?ssl_ca={os.environ.get('CERTIFICATE_PATH')}"
