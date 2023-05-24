@@ -44,12 +44,12 @@ def get_user():
 @auth_bp.route("/auth/signin", methods=["POST"])
 def signin():
     data = request.get_json()
+
     username = data["username"]
-    email = data["email"]
     password = data["password"]
 
-    user = Users.query.filter(
-        (Users.username == username) | (Users.email == email)).first()
+    user = Users.query.filter(Users.username == username).first()
+
     if user is None:
         return jsonify({"message": "User not found"}), 404
     elif check_password_hash(user.usr_password, password) is False:
@@ -77,6 +77,7 @@ def signin():
 @auth_bp.route("/auth/signup", methods=["POST"])
 def signup():
     data = request.get_json()
+
     username = data["username"]
     email = data["email"]
     password = data["password"]
@@ -90,7 +91,7 @@ def signup():
     user_exist = Users.query.filter(
         (Users.username == username) | (Users.email == email)).first()
     if user_exist is not None:
-        return jsonify({"message": "User already exist"}), 409
+        return jsonify({"message": "User already exists"}), 409
     else:
         new_user = Users(
             username=username,
