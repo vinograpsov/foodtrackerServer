@@ -23,15 +23,16 @@ def get_user():
                 return jsonify({"message": "User not found"}), 404
             else:
                 return jsonify({
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "age": user.age,
-                    "weight": user.weight,
-                    "height": user.height,
-                    "sex": user.sex,
-                    "activity": user.activity_level,
-                    "img_url": user.img_url
+                    "user": {
+                        "user_id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                        "age": user.age,
+                        "weight": user.weight,
+                        "height": user.height,
+                        "sex": user.sex,
+                        "activity_level": user.activity_level,
+                        "img_url": user.img_url}
                 }), 200
 
         except jwt.exceptions.DecodeError:
@@ -60,15 +61,17 @@ def signin():
 
         return jsonify({
             "token": token,
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "age": user.age,
-            "weight": user.weight,
-            "height": user.height,
-            "sex": user.sex,
-            "activity": user.activity_level,
-            "img_url": user.img_url
+            "user": {
+                "user_id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "age": user.age,
+                "weight": user.weight,
+                "height": user.height,
+                "sex": user.sex,
+                "activity_level": user.activity_level,
+                "img_url": user.img_url
+            }
         }), 200
 
 
@@ -112,14 +115,16 @@ def signup():
             'SECRET_KEY'), algorithm="HS512")
 
         return jsonify({
-            "id": new_user.id,
             "token": token,
-            "username": new_user.username,
-            "email": new_user.email,
-            "age": new_user.age,
-            "weight": new_user.weight,
-            "height": new_user.height,
-            "sex": new_user.sex,
-            "activity": new_user.activity_level,
-            "img_url": new_user.img_url
+            "user": {
+                "user_id": new_user.id,
+                "username": new_user.username,
+                "email": new_user.email,
+                "age": new_user.age,
+                "weight": new_user.weight,
+                "height": new_user.height,
+                "sex": new_user.sex,
+                "activity_level": new_user.activity_level,
+                "img_url": new_user.img_url
+            }
         }), 201
