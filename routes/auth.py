@@ -23,16 +23,16 @@ def get_user():
                 return jsonify({"message": "User not found"}), 404
             else:
                 return jsonify({
-                    "user": {
-                        "user_id": user.id,
+                    "data": {
+                        "id": user.id,
                         "username": user.username,
                         "email": user.email,
                         "age": user.age,
                         "weight": user.weight,
                         "height": user.height,
                         "sex": user.sex,
-                        "activity_level": user.activity_level,
-                        "img_url": user.img_url}
+                        "activity": user.activity_level,
+                        "imgUrl": user.img_url}
                 }), 200
 
         except jwt.exceptions.DecodeError:
@@ -61,16 +61,16 @@ def signin():
 
         return jsonify({
             "token": token,
-            "user": {
-                "user_id": user.id,
+            "data": {
+                "id": user.id,
                 "username": user.username,
                 "email": user.email,
                 "age": user.age,
                 "weight": user.weight,
                 "height": user.height,
                 "sex": user.sex,
-                "activity_level": user.activity_level,
-                "img_url": user.img_url
+                "activity": user.activity_level,
+                "imgUrl": user.img_url
             }
         }), 200
 
@@ -116,15 +116,15 @@ def signup():
 
         return jsonify({
             "token": token,
-            "user": {
-                "user_id": new_user.id,
+            "data": {
+                "id": new_user.id,
                 "username": new_user.username,
                 "email": new_user.email,
                 "age": new_user.age,
                 "weight": new_user.weight,
                 "height": new_user.height,
                 "sex": new_user.sex,
-                "activity_level": new_user.activity_level,
-                "img_url": new_user.img_url
+                "activity": new_user.activity_level,
+                "imgUrl": new_user.img_url
             }
         }), 201
