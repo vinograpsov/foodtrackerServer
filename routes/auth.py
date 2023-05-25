@@ -15,9 +15,10 @@ def get_user():
         try:
             token = header.split(" ")[1]
             payload = jwt.decode(token, os.environ.get(
-                'SECRET_KEY'), algorithms=["HS256"])
-            user_id = payload["user_id"]
-            user = Users.query.get(user_id)
+                'SECRET_KEY'), algorithms=["HS512"])
+
+            user = Users.query.get(payload["user_id"])
+
             if user is None:
                 return jsonify({"message": "User not found"}), 404
             else:
@@ -56,7 +57,7 @@ def signin():
         return jsonify({"message": "Wrong username or password"}), 401
     else:
         token = jwt.encode({"user_id": user.id}, os.environ.get(
-            'SECRET_KEY'), algorithm="HS256")
+            'SECRET_KEY'), algorithm="HS512")
 
         return jsonify({
             "token": token,
@@ -88,9 +89,10 @@ def signup():
     activity_level = data["activity_level"]
     img_url = data["img_url"]
 
-    user_exist = Users.query.filter(
+    user = Users.query.filter(
         (Users.username == username) | (Users.email == email)).first()
-    if user_exist is not None:
+
+    if user is not None:
         return jsonify({"message": "User already exists"}), 409
     else:
         new_user = Users(
@@ -110,7 +112,7 @@ def signup():
 
         token = jwt.encode({"user_id": new_user.id},
                            os.environ.get(
-            'SECRET_KEY'), algorithm="HS256")
+            'SECRET_KEY'), algorithm="HS512")
 
         return jsonify({
             "token": token,
