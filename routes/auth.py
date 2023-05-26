@@ -86,8 +86,7 @@ def signup():
     weight = data["weight"]
     height = data["height"]
     sex = data["sex"]
-    activity_level = data["activity_level"]
-    img_url = data["img_url"]
+    activity_level = data["activity"]
 
     user = Users.query.filter(
         (Users.username == username) | (Users.email == email)).first()
@@ -104,27 +103,16 @@ def signup():
             height=height,
             sex=sex,
             activity_level=activity_level,
-            img_url=img_url
+            img_url=""
         )
 
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
 
-        token = jwt.encode({"user_id": new_user.id},
-                           os.environ.get(
-            'SECRET_KEY'), algorithm="HS512")
+        except:
+            return jsonify({"message": "error while creating user"}), 500
 
         return jsonify({
-            "token": token,
-            "data": {
-                "id": new_user.id,
-                "username": new_user.username,
-                "email": new_user.email,
-                "age": new_user.age,
-                "weight": new_user.weight,
-                "height": new_user.height,
-                "sex": new_user.sex,
-                "activity": new_user.activity_level,
-                "imgUrl": new_user.img_url
-            }
+            "message": "success"
         }), 201
