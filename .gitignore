@@ -2,6 +2,5 @@
 /__pycache__
 /certs
 /certificates
-/venv
 .env
 /routes/__pycache__

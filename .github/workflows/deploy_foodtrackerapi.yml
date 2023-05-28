@@ -12,7 +12,14 @@ on:
 
 jobs:
   build:
+    environment: 'Production'
     runs-on: ubuntu-latest
+    env:
+      DATABASE_SERVER_URL: ${{ secrets.DATABASE_SERVER_URL }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
       - uses: actions/checkout@v2
