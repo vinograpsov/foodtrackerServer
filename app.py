@@ -8,15 +8,15 @@ from models import db, Users
 
 from routes.auth import auth_bp
 from routes.calories import calories_bp
+from routes.products import products_bp
 
 app = Flask(__name__)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(calories_bp)
+app.register_blueprint(products_bp)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mysql+pymysql://{os.environ.get('DB_USERNAME')}:{os.environ.get('PASSWORD')}@{os.environ.get('DATABASE_SERVER_URL')}/{os.environ.get('DATABASE_NAME')}?ssl_ca={os.environ.get('CERTIFICATE_PATH')}"
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{os.environ.get('DB_USERNAME')}:{os.environ.get('PASSWORD')}@{os.environ.get('DATABASE_SERVER_URL')}/{os.environ.get('DATABASE_NAME')}"
 
 db.init_app(app)
 
@@ -24,6 +24,16 @@ db.init_app(app)
 @app.route("/")
 def index():
     return jsonify({"message": "Hello world from the backend!"}), 200
+
+@app.route("/create_db")
+def create_db():
+    try:
+        with app.app_context():
+            db.create_all()
+            return jsonify({"message": "Database created successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"message": "Database creation failed", "error": str(e)}), 500
 
 
 @app.route("/check-db-connection")

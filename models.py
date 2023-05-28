@@ -42,7 +42,7 @@ class Fridge(db.Model):
 
 class Products(db.Model):
     __tablename__ = 'products'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     product_name = db.Column(db.String(255), nullable=False)
     calories = db.Column(db.Float, nullable=False)
@@ -55,7 +55,7 @@ class Products(db.Model):
 
 class Recipes(db.Model):
     __tablename__ = 'recipes'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     name = db.Column(db.String(255), nullable=False)
     annotation = db.Column(db.String(255), nullable=False)
