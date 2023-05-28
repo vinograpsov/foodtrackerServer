@@ -3,6 +3,7 @@
 import os
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 from models import db, Users
 
@@ -11,6 +12,7 @@ from routes.calories import calories_bp
 from routes.products import products_bp
 
 app = Flask(__name__)
+CORS(app)  # Cross Origin Resource Sharing
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(calories_bp)
