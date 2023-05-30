@@ -14,14 +14,14 @@ def get_calories():
     if header:
         try:    
             token = header.split(" ")[1]
-            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS512"])
             user_id = payload["user_id"]
             user = Users.query.get(user_id)
             if user is None:
                 return jsonify({"message": "User not found"}), 404
             else:
 
-                start_date = datetime.now() - timedelta(days=7)
+                start_date = datetime.now() - timedelta(days=31)
                 end_date = datetime.now()
 
                 user_elements = Elements.query.filter(and_(Elements.user_id == user_id, 
@@ -32,22 +32,38 @@ def get_calories():
                     return jsonify({"message": "No elements found"}), 404
 
                 else:
-                    user_stats = []
+            
+                    user_stats = {}
                     for el in user_elements:
-                        user_stats.append({
-                            "calories" : el.calories,
-                            "protein" : el.protein,
-                            "fat" : el.fat,
-                            "carbohydrates" : el.carbohydrates
+                        date = el.date_usr.date()
+                        if date in user_stats:
+                            user_stats[date]["calories"] += el.calories
+                            user_stats[date]["protein"] += el.protein
+                            user_stats[date]["fat"] += el.fat
+                            user_stats[date]["carbohydrates"] += el.carbohydrates
+                        else:
+                            user_stats[date] = {
+                                "calories" : el.calories,
+                                "protein" : el.protein,
+                                "fat" : el.fat,
+                                "carbohydrates" : el.carbohydrates
+                            }
+                            
+
+                    response = []
+                    for key, value in user_stats.items():
+                        response.append({
+                            "date" : key,
+                            "calories" : value["calories"],
+                            "protein" : value["protein"],
+                            "fat" : value["fat"],
+                            "carbohydrates" : value["carbohydrates"]
                         })
 
-                    return jsonify({
-                        "user_id" : user_id,
-                        "stats" : user_stats,
-                        "start_date" : start_date,
-                        "end_date" : end_date
-                    }), 200  
 
+                    return jsonify({
+                        "stats_by_date" : response,
+                    }), 200    
 
         except jwt.exceptions.DecodeError:
             return jsonify({"message": "Invalid token"}), 401
@@ -61,7 +77,7 @@ def add_calories():
     if header:
         try:    
             token = header.split(" ")[1]
-            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS512"])
             user_id = payload["user_id"]
             user = Users.query.get(user_id)
             
@@ -90,3 +106,56 @@ def add_calories():
             return jsonify({"message": "Invalid token"}), 401
     else:
         return jsonify({"message": "Missing token"}), 401
+    
+
+    
+
+
+@calories_bp.route("/calories/consumption", methods=["GET"])
+def get_consumption():
+    header = request.headers.get("Authorization")
+    if header:
+        try:    
+            token = header.split(" ")[1]
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS512"])
+            user_id = payload["user_id"]
+            user = Users.query.get(user_id)
+            
+            if user is None:
+                return jsonify({"message": "User not found"}), 404
+            
+            else:
+
+                user_callories_consumption = daily_callories(user.sex, user.weight, user.height, user.age, user.activity_level)
+                
+                return jsonify({
+                    "callories" : user_callories_consumption,
+                    "protein" : daily_proteins(user_callories_consumption),
+                    "fats" : daily_fats(user_callories_consumption),
+                    "carbohydrates" : daily_carbohydrates(user_callories_consumption)
+                    }), 200
+
+        except jwt.exceptions.DecodeError:
+            return jsonify({"message": "Invalid token"}), 401
+    else:
+        return jsonify({"message": "Missing token"}), 401
+    
+
+
+def daily_callories(sex, weight, height, age, activity):
+    add_coiff = 0
+    activity_map = {"minimal" : 1.2, "weak" : 1.375, "medium" : 1.55, "high" : 1.7, "extra activity" : 1.9}
+    if sex == "m":
+        add_coiff = 5
+    elif sex == "f":
+        add_coiff = -161
+    return (10 * weight + 6.25 * height - 5 * age + add_coiff) * activity_map[activity]
+
+def daily_fats(calories):
+    return calories * 0.3 / 4
+
+def daily_proteins(calories):
+    return calories * 0.3 / 9
+
+def daily_carbohydrates(calories):
+    return calories * 0.4 / 4

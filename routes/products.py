@@ -15,7 +15,7 @@ def added_by_me():
     if header:
         try:
             token = header.split(" ")[1]
-            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS512"])
             user_id = payload["user_id"]
             user = Users.query.get(user_id)
             if user is None:
@@ -50,7 +50,7 @@ def get_calories():
     if header:
         try:    
             token = header.split(" ")[1]
-            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS256"])
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY'), algorithms=["HS512"])
             user_id = payload["user_id"]
             user = Users.query.get(user_id)
             if user is None:
