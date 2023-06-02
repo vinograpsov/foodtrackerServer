@@ -27,6 +27,7 @@ db.init_app(app)
 def index():
     return jsonify({"message": "Hello world from the backend!"}), 200
 
+
 @app.route("/create_db")
 def create_db():
     try:
