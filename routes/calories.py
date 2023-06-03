@@ -52,16 +52,6 @@ def get_calories():
                                 "carbohydrates": el.carbohydrates
                             }
 
-                    # response = []
-                    # for key, value in user_stats.items():
-                    #     response.append({
-                    #         "date": key,
-                    #         "calories": value["calories"],
-                    #         "protein": value["protein"],
-                    #         "fat": value["fat"],
-                    #         "carbohydrates": value["carbohydrates"]
-                    #     })
-
                     return jsonify(
                         user_stats
                     ), 200

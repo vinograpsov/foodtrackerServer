@@ -10,6 +10,7 @@ from models import db, Users
 from routes.auth import auth_bp
 from routes.calories import calories_bp
 from routes.products import products_bp
+from routes.fridge import fridge_bp
 
 app = Flask(__name__)
 CORS(app)  # Cross Origin Resource Sharing
@@ -17,6 +18,7 @@ CORS(app)  # Cross Origin Resource Sharing
 app.register_blueprint(auth_bp)
 app.register_blueprint(calories_bp)
 app.register_blueprint(products_bp)
+app.register_blueprint(fridge_bp)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{os.environ.get('DB_USERNAME')}:{os.environ.get('PASSWORD')}@{os.environ.get('DATABASE_SERVER_URL')}/{os.environ.get('DATABASE_NAME')}"
 
