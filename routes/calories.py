@@ -129,9 +129,9 @@ def get_consumption():
                     user.sex, user.weight, user.height, user.age, user.activity_level)
 
                 return jsonify({
-                    "callories": math.floor(user_callories_consumption),
+                    "calories": math.floor(user_callories_consumption),
                     "protein": math.floor(daily_proteins(user_callories_consumption)),
-                    "fats": math.floor(daily_fats(user_callories_consumption)),
+                    "fat": math.floor(daily_fats(user_callories_consumption)),
                     "carbohydrates": math.floor(daily_carbohydrates(user_callories_consumption))
                 }), 200
 
