@@ -38,6 +38,7 @@ def get_calories():
                     user_stats = {}
                     for el in user_elements:
                         date = el.date_usr.date()
+                        date = date.strftime("%d-%m-%Y")
                         if date in user_stats:
                             user_stats[date]["calories"] += el.calories
                             user_stats[date]["protein"] += el.protein
@@ -51,19 +52,19 @@ def get_calories():
                                 "carbohydrates": el.carbohydrates
                             }
 
-                    response = []
-                    for key, value in user_stats.items():
-                        response.append({
-                            "date": key,
-                            "calories": value["calories"],
-                            "protein": value["protein"],
-                            "fat": value["fat"],
-                            "carbohydrates": value["carbohydrates"]
-                        })
+                    # response = []
+                    # for key, value in user_stats.items():
+                    #     response.append({
+                    #         "date": key,
+                    #         "calories": value["calories"],
+                    #         "protein": value["protein"],
+                    #         "fat": value["fat"],
+                    #         "carbohydrates": value["carbohydrates"]
+                    #     })
 
-                    return jsonify({
-                        "stats_by_date": response,
-                    }), 200
+                    return jsonify(
+                        user_stats
+                    ), 200
 
         except jwt.exceptions.DecodeError:
             return jsonify({"message": "Invalid token"}), 401
