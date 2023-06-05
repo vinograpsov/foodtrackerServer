@@ -115,9 +115,9 @@ def delete_product():
                     location = data["location"]
                     expire_data = data["expire_data"]
                     
-                    Fridge.query.filter(and_(Fridge.product_id == product_id, Fridge.user_id == user_id,
-                                            Fridge.expire_data == expire_data, Fridge.location == location)).delete()
-                    
+
+                    sql_query_delete = text("DELETE FROM fridge WHERE user_id = :user_id AND product_id = :product_id AND expire_data = :expire_data AND location = :location")
+                    db.session.execute(sql_query_delete, {"user_id": user_id, "product_id": product_id, "expire_data": expire_data, "location": location})
                     db.session.commit()
 
                     return jsonify({"message": "Element deleted"}), 200
@@ -158,36 +158,31 @@ def change_product():
 
                 sql_query = text('SELECT * FROM fridge WHERE user_id = :user_id AND product_id = :current_product_id AND expire_data = :current_expire_data AND location = :current_location')
                 user_fridge_sql = db.session.execute(sql_query, {"user_id": user_id, "current_product_id": current_product_id, "current_expire_data": current_expire_data, "current_location": current_location})
-                
-                if user_fridge_sql is None:
-                    return jsonify({"message": "Product not found"}), 404
-                
-                else:
-                    sql_query1 = text("SELECT * FROM fridge WHERE user_id = :user_id AND product_id = :new_product_id AND expire_data = :new_expire_data AND location = :new_location")
-                    if sql_query is None:
-                        sql_query2 = text("UPDATE fridge SET expire_data = :new_expire_data, location = :new_location, weight = :new_weight, how_much = :new_how_much WHERE user_id = :user_id AND product_id = :current_product_id AND expire_data = :current_expire_data AND location = :current_location")
-                        db.session.execute(sql_query2, {"user_id": user_id, "current_product_id": current_product_id, "current_expire_data": current_expire_data, "current_location": current_location, "new_expire_data": new_expire_data, "new_location": new_location, "new_weight": new_weight, "new_how_much": new_how_much})
-                        return jsonify({"message": "Element updated"}), 200
-                    else:
-                        sql_query2 = text("UPDATE fridge SET weight = weight + new_weight, how_much = how_much + new_how_much WHERE user_id = :user_id AND :product_id = :current_product_id AND :expire_data = :new_expire_data AND location = :new_location")
-                        db.session.execute(sql_query2, {"user_id": user_id, "current_product_id": current_product_id, "new_expire_data": new_expire_data, "new_location": new_location, "new_weight": new_weight, "new_how_much": new_how_much})
-                        return jsonify ({"message": "Element updated"}), 200
-                
-                # # product = Fridge.query.filter(and_(Fridge.product_id == current_product_id, Fridge.user_id == user_id,
-                #                                    Fridge.expire_data == current_expire_data, Fridge.location == current_location)).first()
-               
+                user_fridge_sql_result = user_fridge_sql.first()
 
-                # if product is None:
-                #     return jsonify({"message": "Product not found"}), 404
-               
-               
-                # else:
-                #     product.location = new_location
-                #     product.expire_data = new_expire_data   
-                #     product.weight = new_weight
-                #     product.how_much = new_how_much
-                #     db.session.commit()
-                #     return jsonify({"message": "success"}), 200
+                if user_fridge_sql_result is None:
+                    return jsonify({"message": "Product not found"}), 404
+                else:
+                    sql_query_copy = text('SELECT * FROM fridge WHERE user_id = :user_id AND product_id = :current_product_id AND expire_data = :new_expire_data AND location = :new_location')
+                    copy_element = db.session.execute(sql_query_copy, {"user_id": user_id, "current_product_id": current_product_id, "new_expire_data": new_expire_data, "new_location": new_location})
+                    copy_element_result = copy_element.first()
+
+                    if copy_element_result is None:
+                        sql_query_update = text("UPDATE fridge SET expire_data = :new_expire_data, location = :new_location, weight = :new_weight, how_much = :new_how_much WHERE user_id = :user_id AND product_id = :current_product_id AND expire_data = :current_expire_data AND location = :current_location")
+                        updated_val = db.session.execute(sql_query_update, {"user_id": user_id, "current_product_id": current_product_id, "current_expire_data": current_expire_data, "current_location": current_location, "new_expire_data": new_expire_data, "new_location": new_location, "new_weight": new_weight, "new_how_much": new_how_much})
+                        db.session.commit()
+                        return jsonify({"message": "Old element updated"}), 200
+                    else:
+                        copy_element_result
+                        new_weight += copy_element_result.weight
+                        new_how_much += copy_element_result.how_much
+                        sql_query_update = text("UPDATE fridge SET weight = :new_weight, how_much = :new_how_much WHERE user_id = :user_id AND product_id = :current_product_id AND expire_data = :new_expire_data AND location = :new_location")
+                        sql_query_delete = text("DELETE FROM fridge WHERE user_id = :user_id AND product_id = :current_product_id AND expire_data = :current_expire_data AND location = :current_location")
+                        db.session.execute(sql_query_update, {"user_id": user_id, "current_product_id": current_product_id, "new_expire_data": new_expire_data, "new_location": new_location, "new_weight": new_weight, "new_how_much": new_how_much})
+                        db.session.execute(sql_query_delete, {"user_id": user_id, "current_product_id": current_product_id, "current_expire_data": current_expire_data, "current_location": current_location})
+                        db.session.commit()
+                        return jsonify({"message": "Merge elements"}), 200
+                        
         except jwt.exceptions.DecodeError:
             return jsonify({"message": "Invalid token"}), 401
     else:
