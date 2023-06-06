@@ -65,7 +65,7 @@ class Recipes(db.Model):
     name = db.Column(db.String(255), nullable=False)
     annotation = db.Column(db.String(255), nullable=False)
     recepe_text = db.Column(db.String(10000), nullable=False)
-    rate = db.Column(db.String(1), nullable=False)
+    rate = db.Column(db.String(1), nullable=True)
 
     # user = db.relationship('Users', backref=db.backref('recipes', lazy=True))
 
