@@ -25,7 +25,7 @@ def get_calories():
             else:
 
                 start_date = datetime.now() - timedelta(days=31)
-                end_date = datetime.now(timezone.utc(hours = 2))
+                end_date = datetime.now()
 
                 user_elements = Elements.query.filter(and_(Elements.user_id == user_id,
                                                       Elements.date_usr.between(start_date, end_date))).all()
